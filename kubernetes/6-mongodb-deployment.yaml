@@ -19,9 +19,17 @@ spec:
       - name: mongodb-storage
         persistentVolumeClaim:
           claimName: mongodb-pvc
+      - name: mongodb-tls-cert
+        secret:
+          secretName: tls-cert
+      - name: mongodb-config-volume
+        configMap:
+          name: mongodb-config
       containers:
       - name: mongodb
         image: mongo
+        command: ["mongod"]
+        args: ["--config", "/etc/mongodb/config/mongod.conf"]
         resources:
           requests:
             memory: 256Mi
@@ -31,7 +39,7 @@ spec:
             cpu: 200m
         ports:
         - containerPort: 27017
-        env: 
+        env:
         - name: MONGO_INITDB_ROOT_USERNAME
           valueFrom:
            secretKeyRef:
@@ -45,3 +53,8 @@ spec:
         volumeMounts:
         - name: mongodb-storage
           mountPath: /data/db
+        - name: mongodb-tls-cert
+          mountPath: /etc/mongodb/tls
+        - name: mongodb-config-volume
+          mountPath: /etc/mongodb/config
+          readOnly: true
