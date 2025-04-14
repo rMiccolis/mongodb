@@ -65,6 +65,7 @@ spec:
           readOnly: true
 EOF
 
-kubectl -n mongodb scale --replicas=0 deployment mongodb
 kubectl apply -f $dirname/apps/mongodb/kubernetes/7-mongodb-deployment-tls-config.yaml
+# kubectl -n mongodb scale --replicas=0 deployment mongodb
+# kubectl -n mongodb scale --replicas=1 deployment mongodb
 kubectl rollout status deployment $project_name -n mongodb --timeout=3000s > /dev/null 2>&1
