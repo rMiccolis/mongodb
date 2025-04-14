@@ -25,49 +25,31 @@ spec:
       - name: mongodb-config-volume
         configMap:
           name: mongodb-config
-# to cut start
-      initContainers:
-        - name: init-mongo-user
-          image: mongo
-          command:
-            - sh
-            - -c
-            - |
-              echo "Waiting for MongoDB to be ready...";
-              until mongo --tls \
-                          --tlsCAFile /etc/mongodb/tls/tls.crt \
-                          --tlsCertificateKeyFile /etc/mongodb/tls/tls.crt \
-                          --host localhost \
-                          --eval "print('MongoDB is up')" &>/dev/null; do
-                sleep 2
-              done
-
-              echo "Creating admin user...";
-              mongo --tls \
-                    --tlsCAFile /etc/mongodb/tls/tls.crt \
-                    --tlsCertificateKeyFile /etc/mongodb/tls/tls.crt \
-                    --host localhost \
-                    --eval "db.getSiblingDB('admin').createUser({ user: '$MONGO_INITDB_ROOT_USERNAME', pwd: '$MONGO_INITDB_ROOT_PASSWORD', roles: [ { role: 'root', db: 'admin' } ] })"
-          env:
-            - name: MONGO_INITDB_ROOT_USERNAME
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb-secret
-                  key: MONGO-ROOT-USERNAME
-            - name: MONGO_INITDB_ROOT_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: mongodb-secret
-                  key: MONGO-ROOT-PASSWORD
-          volumeMounts:
-            - name: tls
-              mountPath: /etc/mongodb/tls
-# to cut end
       containers:
       - name: mongodb
         image: mongo
         command: ["mongod"]
         args: ["--config", "/etc/mongodb/config/mongod.conf"]
+# to cut start
+        lifecycle:
+          postStart:
+            exec:
+              command:
+                - bash
+                - -c
+                - |
+                  sleep 10  # give MongoDB a moment to fully come up
+                  mongosh --tls \
+                    --tlsCAFile /etc/mongodb/tls/tls.crt \
+                    --tlsCertificateKeyFile /etc/mongodb/tls/tls.crt \
+                    --eval "
+                      db.getSiblingDB('admin').createUser({
+                        user: '${MONGO_INITDB_ROOT_USERNAME}',
+                        pwd: '${MONGO_INITDB_ROOT_PASSWORD}',
+                        roles: [{ role: 'root', db: 'admin' }]
+                      })
+                    "
+# to cut end
         resources:
           requests:
             memory: 256Mi
