@@ -28,6 +28,8 @@ spec:
       containers:
       - name: mongodb
         image: mongo
+        command: ["mongod"]
+        args: ["--config", "/etc/mongodb/config/mongod.conf"]
         resources:
           requests:
             memory: 256Mi
