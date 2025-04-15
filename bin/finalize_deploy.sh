@@ -73,3 +73,5 @@ wait
 kubectl -n mongodb scale --replicas=0 deployment mongodb
 kubectl -n mongodb scale --replicas=1 deployment mongodb
 kubectl rollout status deployment mongodb -n mongodb --timeout=3000s > /dev/null 2>&1
+kubectl wait --for=condition=ContainersReady --all pods --all-namespaces --timeout=3000s &
+wait
