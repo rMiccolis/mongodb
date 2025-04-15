@@ -67,9 +67,9 @@ EOF
 
 kubectl apply -f $dirname/apps/mongodb/kubernetes/7-mongodb-deployment-tls-config.yaml
 # wait for resources to be ready
-kubectl rollout status deployment $project_name -n $namespace --timeout=3000s > /dev/null 2>&1
+kubectl rollout status deployment mongodb -n mongodb --timeout=3000s > /dev/null 2>&1
 kubectl wait --for=condition=ContainersReady --all pods --all-namespaces --timeout=3000s &
 wait
 kubectl -n mongodb scale --replicas=0 deployment mongodb
 kubectl -n mongodb scale --replicas=1 deployment mongodb
-kubectl rollout status deployment $project_name -n mongodb --timeout=3000s > /dev/null 2>&1
+kubectl rollout status deployment mongodb -n mongodb --timeout=3000s > /dev/null 2>&1
