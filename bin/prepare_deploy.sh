@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # setting variables for tls certificate
-KEY_FILE="$repository_root_dir/apps/mongodb/tls-cert.key"
-CERT_FILE="$repository_root_dir/apps/mongodb/tls-cert.crt"
+KEY_FILE="tls-cert.key"
+CERT_FILE="tls-cert.crt"
 HOST="$app_server_addr"
 #   cert_file_name='tls-cert'
 # create a certificate for https protocol
