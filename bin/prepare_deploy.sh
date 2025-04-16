@@ -1,5 +1,10 @@
 #!/bin/bash
 
+
+# setting variables for tls certificate
+KEY_FILE="tls-cert.key"
+CERT_FILE="tls-cert.crt"
+
 # setting secret for tls certificate
 kubectl create secret generic tls-cert --from-file=${CERT_FILE}=$repository_root_dir/tls/tls-cert.pem -n mongodb
 
