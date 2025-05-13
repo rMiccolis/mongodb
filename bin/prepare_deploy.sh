@@ -6,17 +6,11 @@ KEY_FILE="tls-cert.key"
 CERT_FILE="mongodb.pem"
 
 # setting secret for tls certificate
-kubectl create secret generic tls-cert --from-file=${CERT_FILE}=$repository_root_dir/tls/tls-cert.pem -n mongodb
-kubectl create secret generic mongodb-ca \
-  --from-file=ca.crt=/home/apps/mongodb/tls/ca.crt \
-  -n mongodb
+awk '/-----BEGIN PRIVATE KEY-----/,/-----END PRIVATE KEY-----/' $repository_root_dir/tls/tls-cert.pem > mongodb-ca-key.pem
+awk '/-----BEGIN CERTIFICATE-----/,/-----END CERTIFICATE-----/' $repository_root_dir/tls/tls-cert.pem > mongodb-ca-cert.pem
 
-# use mongod.conf file to tell mongodb to use it for configuration (it contains tls certificates)
-# store this mongod.conf containing configuration for mongo inside a configmap that will be loaded inside the container
+kubectl -n mongodb create secret generic mongodb-ca-secret \
+    --from-file=mongodb-ca-cert=./mongodb-ca-cert.pem \
+    --from-file=mongodb-ca-key=./mongodb-ca-key.pem
 
-kubectl create configmap mongodb-config --from-file=$repository_root_dir/apps/mongodb/res/mongod.conf -n mongodb
-
-
-helm install mongodb bitnami/mongodb \
-  -f values.yaml \
-  -n mongodb
+helm install mongodb oci://registry-1.docker.io/bitnamicharts/mongodb -n mongodb -f $repository_root_dir/apps/mongodb/res/values.yaml
