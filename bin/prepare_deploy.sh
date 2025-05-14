@@ -13,4 +13,6 @@ kubectl -n mongodb create secret generic mongodb-ca-secret \
     --from-file=mongodb-ca-cert=$repository_root_dir/tls/mongodb-ca-cert.pem \
     --from-file=mongodb-ca-key=$repository_root_dir/tls/mongodb-ca-key.pem
 
+envsubst $repository_root_dir/apps/mongodb/res/values.yaml | sudo tee $repository_root_dir/apps/mongodb/res/values.yaml
+
 helm install mongodb oci://registry-1.docker.io/bitnamicharts/mongodb -n mongodb -f $repository_root_dir/apps/mongodb/res/values.yaml
