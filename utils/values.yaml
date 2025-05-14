@@ -7,8 +7,8 @@ tls:
   - "$app_server_addr"
 auth:
   enabled: true
-  rootUser: root
-  rootPassword: psw
+  rootUser: $mongo_root_username
+  rootPassword: $mongo_root_password
 persistence:
   enabled: true
   existingClaim: mongodb-pvc
