@@ -17,6 +17,6 @@ kubectl rollout status deployment mongodb -n $namespace --timeout=3000s > /dev/n
 kubectl wait --for=condition=Ready --all pods --all-namespaces --timeout=3000s &
 wait
 
-mongodb_podname=$(kubectl get pods -n mongodb | awk 'NR==2{print $1}')
-
-kubectl -n mongodb cp ${mongodb_podname}:/certs/mongodb.pem ${repository_root_dir}/tls/mongodb/mongodb.pem
+# # copy /certs/mongodb.pem from mongodb pod to local file system
+# mongodb_podname=$(kubectl get pods -n mongodb | awk 'NR==2{print $1}')
+# kubectl -n mongodb cp ${mongodb_podname}:/certs/mongodb.pem ${repository_root_dir}/tls/mongodb/mongodb.pem
